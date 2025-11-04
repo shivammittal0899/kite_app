@@ -26,7 +26,6 @@ fetching = False
 fetch_thread = None
 symbol = None
 
-
 # -------------------------
 # Helper Functions
 # -------------------------
