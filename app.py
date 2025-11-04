@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
-from kiteconnect import KiteConnect
-import threading
-import time
-import os
-import pandas as pd
-from datetime import datetime, timedelta
+# from kiteconnect import KiteConnect
+# import threading
+# import time
+# import os
+# import pandas as pd
+# from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
