@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Data</title>
+  <meta http-equiv="refresh" content="5">
+</head>
+<body>
+  <h2>Live Data for {{ symbol }}</h2>
+  <form action="/stop" method="post">
+    <button type="submit">Stop Fetching</button>
+  </form>
+
+  <table border="1" cellpadding="5">
+    <tr>
+      <th>Time</th>
+      <th>Last Price</th>
+      <th>Net Change</th>
+      <th>Volume</th>
+      <th>OI</th>
+      <th>Buy Quantity</th>
+      <th>Sell Quantity</th>
+      <th>Buy Sell Diff</th>
+      <th>Total Bid Qty</th>
+      <th>Total Offer Qty</th>
+    </tr>
+    {% for row in data %}
+    <tr>
+      <td>{{ row['Time'] }}</td>
+      <td>{{ row['Last Price'] }}</td>
+      <td>{{ row['Net Change'] }}</td>
+      <td>{{ row['Volume'] }}</td>
+      <td>{{ row['OI'] }}</td>
+      <td>{{ row['Buy Quantity'] }}</td>
+      <td>{{ row['Sell Quantity'] }}</td>
+      <td>{{ row['Buy Sell Diff'] }}</td>
+      <td>{{ row['Total Bid Qty'] }}</td>
+      <td>{{ row['Total Offer Qty'] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
