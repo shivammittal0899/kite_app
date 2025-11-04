@@ -8,50 +8,50 @@ from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
-from flask import Flask
+# from flask import Flask
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+# @app.route("/")
+# def hello_world():
+#     return "<p>Hello, World!</p>"
 # -------------------------
 # Configuration
 # -------------------------
-# API_KEY = "0qw10pvn638g9jid"
-# API_SECRET = "8bbev51ab3ov4jfkq0ddhmsw1itviexc"
-# ACCESS_TOKEN_FILE = "access_token.txt"
-# REQUEST_TOKEN_FILE = "request_token.txt"
+API_KEY = "0qw10pvn638g9jid"
+API_SECRET = "8bbev51ab3ov4jfkq0ddhmsw1itviexc"
+ACCESS_TOKEN_FILE = "access_token.txt"
+REQUEST_TOKEN_FILE = "request_token.txt"
 
-# DATA_DIR = "data"
-# if not os.path.exists(DATA_DIR):
-#     os.makedirs(DATA_DIR)
+DATA_DIR = "data"
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
 
-# kite = KiteConnect(api_key=API_KEY)
+kite = KiteConnect(api_key=API_KEY)
 
-# fetching = False
-# fetch_thread = None
-# symbol = None
+fetching = False
+fetch_thread = None
+symbol = None
 
 # -------------------------
 # Helper Functions
 # -------------------------
-# def file_age_hours(filepath):
-#     """Return file age in hours."""
-#     if os.path.exists(filepath):
-#         mod_time = datetime.fromtimestamp(os.path.getmtime(filepath))
-#         return (datetime.now() - mod_time).total_seconds() / 3600
-#     return 9999  # large number means missing or expired
+def file_age_hours(filepath):
+    """Return file age in hours."""
+    if os.path.exists(filepath):
+        mod_time = datetime.fromtimestamp(os.path.getmtime(filepath))
+        return (datetime.now() - mod_time).total_seconds() / 3600
+    return 9999  # large number means missing or expired
 
 
-# def get_kite():
-#     """Return Kite object with valid access token."""
-#     global kite
-#     if os.path.exists(ACCESS_TOKEN_FILE):
-#         with open(ACCESS_TOKEN_FILE, "r") as f:
-#             token = f.read().strip()
-#             kite.set_access_token(token)
-#     return kite
+def get_kite():
+    """Return Kite object with valid access token."""
+    global kite
+    if os.path.exists(ACCESS_TOKEN_FILE):
+        with open(ACCESS_TOKEN_FILE, "r") as f:
+            token = f.read().strip()
+            kite.set_access_token(token)
+    return kite
 
 
 # def fetch_data_continuously(symbol):
@@ -113,38 +113,38 @@ def hello_world():
 # -------------------------
 # Routes
 # -------------------------
-# @app.route("/")
-# def index():
-#     """Main route - check token validity."""
-#     access_token_age = file_age_hours(ACCESS_TOKEN_FILE)
-#     if access_token_age < 6:
-#         return redirect(url_for("symbol_page"))
+@app.route("/")
+def index():
+    """Main route - check token validity."""
+    access_token_age = file_age_hours(ACCESS_TOKEN_FILE)
+    if access_token_age < 6:
+        return redirect(url_for("symbol_page"))
 
-#     # No valid token, show login link
-#     login_url = kite.login_url()
-#     return render_template("login.html", login_url=login_url)
+    # No valid token, show login link
+    login_url = kite.login_url()
+    return render_template("login.html", login_url=login_url)
 
 
-# @app.route("/callback")
-# def callback():
-#     """Handle redirect from Zerodha login."""
-#     global kite
-#     request_token = request.args.get("request_token")
+@app.route("/callback")
+def callback():
+    """Handle redirect from Zerodha login."""
+    global kite
+    request_token = request.args.get("request_token")
 
-#     if not request_token:
-#         return "Missing request_token from Zerodha login."
+    if not request_token:
+        return "Missing request_token from Zerodha login."
 
-#     with open(REQUEST_TOKEN_FILE, "w") as f:
-#         f.write(request_token)
+    with open(REQUEST_TOKEN_FILE, "w") as f:
+        f.write(request_token)
 
-#     data = kite.generate_session(request_token, api_secret=API_SECRET)
-#     access_token = data["access_token"]
+    data = kite.generate_session(request_token, api_secret=API_SECRET)
+    access_token = data["access_token"]
 
-#     with open(ACCESS_TOKEN_FILE, "w") as f:
-#         f.write(access_token)
+    with open(ACCESS_TOKEN_FILE, "w") as f:
+        f.write(access_token)
 
-#     kite.set_access_token(access_token)
-#     return redirect(url_for("symbol_page"))
+    kite.set_access_token(access_token)
+    return redirect(url_for("symbol_page"))
 
 
 # @app.route("/symbol")
