@@ -196,5 +196,5 @@ def hello_world():
 #     return render_template("data.html", data=[], symbol=symbol)
 
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run()
