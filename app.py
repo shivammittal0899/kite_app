@@ -152,10 +152,10 @@ def callback():
     return redirect(url_for("symbol_page"))
 
 
-# @app.route("/symbol")
-# def symbol_page():
-#     """Page to enter trading symbol."""
-#     return render_template("symbol.html")
+@app.route("/symbol")
+def symbol_page():
+    """Page to enter trading symbol."""
+    return render_template("symbol.html")
 
 
 # @app.route("/start", methods=["POST"])
