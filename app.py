@@ -23,7 +23,12 @@ API_SECRET = "8bbev51ab3ov4jfkq0ddhmsw1itviexc"
 ACCESS_TOKEN_FILE = "access_token.txt"
 REQUEST_TOKEN_FILE = "request_token.txt"
 
-DATA_DIR = "data"
+# DATA_DIR = "data"
+# if not os.path.exists(DATA_DIR):
+#     os.makedirs(DATA_DIR)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
