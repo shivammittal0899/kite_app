@@ -59,60 +59,60 @@ def get_kite():
     return kite
 
 
-# def fetch_data_continuously(symbol):
-#     """Background thread: fetch live data every 5s and save to Excel."""
-#     global fetching
-#     kite = get_kite()
-#     file_path = os.path.join(DATA_DIR, f"{symbol.replace(':', '_')}.csv")
+def fetch_data_continuously(symbol):
+    """Background thread: fetch live data every 5s and save to Excel."""
+    global fetching
+    kite = get_kite()
+    file_path = os.path.join(DATA_DIR, f"{symbol.replace(':', '_')}.csv")
 
-#     # Initialize Excel file if not exists
-#     if not os.path.exists(file_path):
-#         pd.DataFrame(columns=[
-#         "Time", "Last Price", "Net Change", "Buy Quantity", 
-#         "Sell Quantity", "Buy Sell Diff", "Total Bid Qty", "Total Offer Qty"
-#     ]).to_csv(file_path, index=False)
+    # Initialize Excel file if not exists
+    if not os.path.exists(file_path):
+        pd.DataFrame(columns=[
+        "Time", "Last Price", "Net Change", "Buy Quantity", 
+        "Sell Quantity", "Buy Sell Diff", "Total Bid Qty", "Total Offer Qty"
+    ]).to_csv(file_path, index=False)
 
-#     while fetching:
-#         try:
-#             quote = kite.quote(symbol)
-#             data = quote[symbol]
-#             bids = sum([b["quantity"] for b in data["depth"]["buy"]])
-#             offers = sum([s["quantity"] for s in data["depth"]["sell"]])
-#             last_price = data["last_price"]
-#             net_change = data["net_change"]
-#             buy_quantity = data["buy_quantity"]
-#             sell_quantity = data["sell_quantity"]
-#             buy_sell_diff = buy_quantity - sell_quantity
-#             volume = data["volume"]
-#             oi = data["oi"]
-#             new_row = {
-#                 "Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-#                 "Last Price": last_price,
-#                 "Net Change": net_change,
-#                 "Volume": volume,
-#                 "OI": oi,
-#                 "Buy Quantity": buy_quantity,
-#                 "Sell Quantity": sell_quantity,
-#                 "Buy Sell Diff": buy_sell_diff,
-#                 "Total Bid Qty": bids,
-#                 "Total Offer Qty": offers
-#             }
+    while fetching:
+        try:
+            quote = kite.quote(symbol)
+            data = quote[symbol]
+            bids = sum([b["quantity"] for b in data["depth"]["buy"]])
+            offers = sum([s["quantity"] for s in data["depth"]["sell"]])
+            last_price = data["last_price"]
+            net_change = data["net_change"]
+            buy_quantity = data["buy_quantity"]
+            sell_quantity = data["sell_quantity"]
+            buy_sell_diff = buy_quantity - sell_quantity
+            volume = data["volume"]
+            oi = data["oi"]
+            new_row = {
+                "Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "Last Price": last_price,
+                "Net Change": net_change,
+                "Volume": volume,
+                "OI": oi,
+                "Buy Quantity": buy_quantity,
+                "Sell Quantity": sell_quantity,
+                "Buy Sell Diff": buy_sell_diff,
+                "Total Bid Qty": bids,
+                "Total Offer Qty": offers
+            }
 
-#             # Read old CSV if exists, else start new DataFrame
-#             if os.path.exists(file_path):
-#                 df = pd.read_csv(file_path)
-#                 # Append new data at top
-#                 df = pd.concat([pd.DataFrame([new_row]), df], ignore_index=True)
-#             else:
-#                 df = pd.DataFrame([new_row])
+            # Read old CSV if exists, else start new DataFrame
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path)
+                # Append new data at top
+                df = pd.concat([pd.DataFrame([new_row]), df], ignore_index=True)
+            else:
+                df = pd.DataFrame([new_row])
 
-#             # Save updated CSV
-#             df.to_csv(file_path, index=False)
+            # Save updated CSV
+            df.to_csv(file_path, index=False)
 
-#             time.sleep(5)
-#         except Exception as e:
-#             print("Error fetching data:", e)
-#             time.sleep(5)
+            time.sleep(5)
+        except Exception as e:
+            print("Error fetching data:", e)
+            time.sleep(5)
 
 
 # -------------------------
@@ -158,47 +158,47 @@ def symbol_page():
     return render_template("symbol.html")
 
 
-# @app.route("/start", methods=["POST"])
-# def start():
-#     """Start background data fetching."""
-#     global fetching, fetch_thread, symbol
-#     symbol = request.form.get("symbol").strip()
-#     if not symbol:
-#         return "Symbol required!"
+@app.route("/start", methods=["POST"])
+def start():
+    """Start background data fetching."""
+    global fetching, fetch_thread, symbol
+    symbol = request.form.get("symbol").strip()
+    if not symbol:
+        return "Symbol required!"
 
-#     if not fetching:
-#         fetching = True
-#         fetch_thread = threading.Thread(target=fetch_data_continuously, args=(symbol,))
-#         fetch_thread.start()
+    if not fetching:
+        fetching = True
+        fetch_thread = threading.Thread(target=fetch_data_continuously, args=(symbol,))
+        fetch_thread.start()
 
-#     return redirect(url_for("data_page"))
-
-
-# @app.route("/stop", methods=["POST"])
-# def stop():
-#     """Stop data fetching thread."""
-#     global fetching
-#     fetching = False
-#     return redirect(url_for("data_page"))
+    return redirect(url_for("data_page"))
 
 
-# @app.route("/data")
-# def data_page():
-#     """Display latest data from Excel file."""
-#     if symbol:
-#         file_path = os.path.join(DATA_DIR, f"{symbol.replace(':', '_')}.csv")
-#         if os.path.exists(file_path):
-#             try:
-#                 df = pd.read_csv(file_path)
-#                 # Ensure latest data is shown at the top (optional if already done)
-#                 data = df.to_dict(orient="records")
-#             except Exception as e:
-#                 print(f"Error reading CSV: {e}")
-#                 data = []
-#             return render_template("data.html", data=data, symbol=symbol)
+@app.route("/stop", methods=["POST"])
+def stop():
+    """Stop data fetching thread."""
+    global fetching
+    fetching = False
+    return redirect(url_for("data_page"))
 
-#     # If no file found or symbol is missing
-#     return render_template("data.html", data=[], symbol=symbol)
+
+@app.route("/data")
+def data_page():
+    """Display latest data from Excel file."""
+    if symbol:
+        file_path = os.path.join(DATA_DIR, f"{symbol.replace(':', '_')}.csv")
+        if os.path.exists(file_path):
+            try:
+                df = pd.read_csv(file_path)
+                # Ensure latest data is shown at the top (optional if already done)
+                data = df.to_dict(orient="records")
+            except Exception as e:
+                print(f"Error reading CSV: {e}")
+                data = []
+            return render_template("data.html", data=data, symbol=symbol)
+
+    # If no file found or symbol is missing
+    return render_template("data.html", data=[], symbol=symbol)
 
 
 # if __name__ == "__main__":
